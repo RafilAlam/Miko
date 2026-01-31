@@ -9,7 +9,6 @@ Providing an `open-source` Interactive Assistant that you can be *sure of* isn't
 - [ ] Local TTS
 - [ ] Model Tool-Calling
 - [ ] Memory Tools (smart context window handling)
+- [ ] Terminal & GUI Front-end
 - [ ] Local Server Inference
 - [ ] Model Hot-Swapping (Multi-Modal Support)
-
- 
