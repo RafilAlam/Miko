@@ -1,0 +1,4 @@
+/home/rafil/Projects/Miko/build/CMakeFiles/Miko.dir
+/home/rafil/Projects/Miko/build/CMakeFiles/MikoLib.dir
+/home/rafil/Projects/Miko/build/CMakeFiles/edit_cache.dir
+/home/rafil/Projects/Miko/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/rafil/Projects/Miko/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
