@@ -1,7 +1,13 @@
 {
 	"InstallScripts" : 
 	[
-		"/home/rafil/Projects/Miko/build/cmake_install.cmake"
+		"/home/rafil/Projects/Miko/build/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/ggml/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/ggml/src/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/ggml/src/ggml-cpu/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/ggml/src/ggml-cuda/cmake_install.cmake",
+		"/home/rafil/Projects/Miko/build/submodules/llamacpp/src/cmake_install.cmake"
 	],
 	"Parallel" : false
 }
