@@ -93,20 +93,38 @@ std::string LLM::generate(std::string prompt) {
   return response;
 }
 
+int LLM::system(std::string systemPrompt) {
+  if (systemPrompt.empty()) {
+    return 0;
+  }
+
+  this->messages.push_back({"system", strdup(systemPrompt.c_str())});
+  int new_len = llama_chat_apply_template(this->tmpl, this->messages.data(), this->messages.size(), true, this->formatted.data(), this->formatted.size());
+  if(new_len > (int)this->formatted.size()) {
+    this->formatted.resize(new_len);
+    new_len = llama_chat_apply_template(this->tmpl, this->messages.data(), this->messages.size(), true, this->formatted.data(), this->formatted.size());
+  }
+  if (new_len < 0) {
+    fprintf(stderr, "failed to apply the chat template on system prompt\n");
+  }
+
+  return 0;
+}
+
 int LLM::inference(std::string userInput) {
   if (userInput.empty()) {
     return 0;
   }
 
   // add the user input to the message list and format it
-  messages.push_back({"user", strdup(userInput.c_str())});
+  this->messages.push_back({"user", strdup(userInput.c_str())});
   int new_len = llama_chat_apply_template(this->tmpl, this->messages.data(), this->messages.size(), true, this->formatted.data(), this->formatted.size());
   if (new_len > (int)this->formatted.size()) {
     this->formatted.resize(new_len);
     new_len = llama_chat_apply_template(this->tmpl, this->messages.data(), this->messages.size(), true, this->formatted.data(), this->formatted.size());
   }
   if (new_len < 0) {
-    fprintf(stderr, "failed to apply the chat template\n");
+    fprintf(stderr, "failed to apply the chat template on user input\n");
     return 1;
   }
 
@@ -119,17 +137,19 @@ int LLM::inference(std::string userInput) {
   printf("\n\033[0m");
 
   // add the response to the messages
-  messages.push_back({"assistant", strdup(response.c_str())});
+  this->messages.push_back({"assistant", strdup(response.c_str())});
   this->prev_len = llama_chat_apply_template(this->tmpl, this->messages.data(), this->messages.size(), false, nullptr, 0);
   if (this->prev_len < 0) {
-    fprintf(stderr, "failed to apply the chat template\n");
+    fprintf(stderr, "failed to apply the chat template on assistant response\n");
     return 1;
   }
 
   return 0;
 }
 
-Miko::Miko(const char* llm_model_path, int n_ctx) : llm(new LLM(llm_model_path, n_ctx)) {}
+Miko::Miko(const char* llm_model_path, int n_ctx, std::string systemPrompt) : llm(new LLM(llm_model_path, n_ctx)) {
+  this->llm->system(systemPrompt);
+}
 Miko::~Miko() {
   delete this->llm;
 }

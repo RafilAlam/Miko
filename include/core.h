@@ -29,6 +29,7 @@ class LLM {
   public:
     LLM(const char* model_path, int n_ctx);
     ~LLM();
+    int system(std::string systemPrompt);
     int inference(std::string userInput);
     std::string generate(std::string prompt);
 };
@@ -38,7 +39,7 @@ class Miko {
     LLM* llm;
   
   public:
-    Miko(const char* llm_model_path, int n_ctx);
+    Miko(const char* llm_model_path, int n_ctx, std::string systemPrompt);
     ~Miko();
     void chat(std::string message);
 };
