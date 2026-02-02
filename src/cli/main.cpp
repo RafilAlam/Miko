@@ -1,4 +1,5 @@
-#include <core.h>
+#include <core.hpp>
+#include <ui.hpp>
 
 int main() {
   const char* Chimera12B = "models/CaptainErisNebula-12B-Chimera-v1.1-Q4_K_M-imat.gguf";

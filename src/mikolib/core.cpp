@@ -1,4 +1,4 @@
-#include <core.h>
+#include <core.hpp>
 
 // Helpers
 void debugLog(std::string log) {

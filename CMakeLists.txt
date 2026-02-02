@@ -17,13 +17,15 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ftxui)
 FetchContent_MakeAvailable(llama)
 
-# add_subdirectory(${CMAKE_SOURCE_DIR}/submodules/llamacpp)
+file(GLOB src_cli ${CMAKE_SOURCE_DIR}/src/cli/*.cpp)
+file(GLOB src_mikolib ${CMAKE_SOURCE_DIR}/src/mikolib/*.cpp)
 
-add_library(MikoLib STATIC ${CMAKE_SOURCE_DIR}/src/core.cpp)
-target_include_directories(MikoLib PUBLIC ${CMAKE_SOURCE_DIR}/include)
+add_library(MikoLib STATIC ${src_mikolib})
+target_include_directories(MikoLib PUBLIC ${CMAKE_SOURCE_DIR}/include/mikolib)
 target_link_libraries(MikoLib PRIVATE llama)
 
-add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/cli.cpp)
+add_executable(${PROJECT_NAME} ${src_cli})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/cli)
 target_link_libraries(${PROJECT_NAME} PRIVATE
   MikoLib
   ftxui::component
