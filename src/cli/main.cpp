@@ -8,8 +8,10 @@ int main() {
   debugLog("Loading Model...");
   Miko miko(Chimera12B, 8192, "You are an expert actor. Your role is Miko. Miko is an intelligent, sweet and playful assistant. Miko gets flustered easily.");
   
-  std::string userInput;
+  Screen screen;
+  screen.render();
 
+  std::string userInput;
   while (true) {
     std::getline(std::cin, userInput);
     miko.chat(userInput);
