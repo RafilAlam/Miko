@@ -5,14 +5,15 @@
 #include <map>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <functional>
 #include <filesystem>
 
-std::map<std::string, std::function<void(std::string)>> functions;
+std::map<std::string, std::function<void()>> functions;
 
 void loadProfile(std::string& modelpath, std::string& systemprompt) {
   std::string configDir = std::getenv("HOME") + std::string("/.config/miko");
-  std::string modelDir = std::getenv("HOME") + std::string("/.local/share/");
+  std::string modelDir = std::getenv("HOME") + std::string("/.local/share/miko/");
   if (!std::filesystem::exists(configDir)) {
     std::filesystem::create_directory(configDir);
     std::filesystem::create_directory(configDir + "/profiles");
@@ -28,29 +29,51 @@ void loadProfile(std::string& modelpath, std::string& systemprompt) {
     file.close();
   }
 
-  configmap map = file_to_map(configDir + "miko.conf");
+  configmap map = file_to_map(configDir + "/miko.conf");
   modelpath = map[map["model_choice"]];
+  std::cout << map["model_choice"] << std::endl;
   if (modelpath.empty()) {
     std::cerr << "Invalid model choice!\n";
     std::exit(1);
   }
+  modelpath = modelDir + modelpath;
+}
+
+void init() {
+  functions["wake"] = []() {
+    std::string homeDir = std::getenv("HOME");
+    std::string modelPath;
+    std::string systemPrompt;
+
+    debugLog("Loading Model...");
+    loadProfile(modelPath, systemPrompt);
+    Miko miko(modelPath.c_str(), 8192, systemPrompt);
+    
+    Screen screen;
+    screen.render();
+
+    std::string userInput;
+    while (true) {
+      std::getline(std::cin, userInput);
+      miko.chat(userInput);
+    }   
+  };
+
+  functions["add"] = []() {
+    std::cout << "Invalid usage of add.\n add -m <file_name.gguf> - Adds a model to registry.\n add -p <file_name> - Adds a profile to registry.\n";
+  };
+
+  functions["add-m"] = []() {
+    std::cout << "add-m!\n";
+  };
 }
 
 int main(int argc, const char* argv[]) {
-  std::string homeDir = std::getenv("HOME");
-  std::string modelPath;
-  std::string systemPrompt;
-
-  debugLog("Loading Model...");
-  loadProfile(modelPath, systemPrompt);
-  Miko miko(modelPath.c_str(), 8192, systemPrompt);
-  
-  Screen screen;
-  screen.render();
-
-  std::string userInput;
-  while (true) {
-    std::getline(std::cin, userInput);
-    miko.chat(userInput);
+  init();
+  std::vector<std::string> args(argv, argv+argc);
+  std::string function = args[1];
+  if (argc>2) {
+    function += args[2];
   }
+  functions[function]();
 }
