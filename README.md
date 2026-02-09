@@ -4,7 +4,7 @@ A personal desktop AI Assistant. The improved successor to [Hermes](https://gith
 ## Aim
 Providing an `open-source` Interactive Assistant that you can be *sure of* isn't stealing your data behind your back.
 
-## Features Roadmap ([x] - Usable, 🚧 - Currently being worked on)
+## Features Roadmap (✔ - Usable, 🚧 - Currently being worked on)
 - [x] Local LLM
 - [ ] Local TTS
 - [ ] Model Tool-Calling
