@@ -57,6 +57,18 @@ void init() {
     file.close();
   }
 
+  functions["cd-m"] = [](std::vector<std::string> args) {
+    configmap map = file_to_map(configDir + "/models.conf");
+    map["model_choice"] = args[3];
+    map_to_file(map, configDir + "/models.conf");
+  };
+
+  functions["cd-p"] = [](std::vector<std::string> args) {
+    configmap map = file_to_map(configDir + "/profiles.conf");
+    map["profile_choice"] = args[3];
+    map_to_file(map, configDir + "/profiles.conf");
+  };
+
   functions["wake"] = [](std::vector<std::string> args) {
     std::string modelPath;
     std::string systemPrompt;
@@ -89,12 +101,33 @@ void init() {
     map_to_file(map, configDir + "/models.conf");
   };
 
+  functions["add-p"] = [](std::vector<std::string> args) {
+    if (args.size()<=3) {
+      functions["add"](args);
+    }
+    if (std::string(std::getenv("EDITOR")).empty()) {
+      debugLog("ERROR: Global Env Variable 'EDITOR' is not set, please set it to your preferred text editor.");
+      std::exit(1);
+    }
+    configmap map = file_to_map(configDir + "/profiles.conf");
+    map[args[3]] = args[4];
+    std::system(("$EDITOR " + configDir + "/profiles/" + args[4]).c_str());
+    map_to_file(map, configDir + "/profiles.conf");
+  };
+
   functions["ls"] = [](std::vector<std::string> args) {
     std::cout << "Invalid usage of ls.\n ls -m - Shows list of models\n ls -p - Shows list of profiles\n";
   };
 
   functions["ls-m"] = [](std::vector<std::string> args) {
     configmap map = file_to_map(configDir + "/models.conf");
+    for (const auto& pair : map) {
+      std::cout << pair.first << " - " << pair.second << std::endl;
+    }
+  };
+
+  functions["ls-p"] = [](std::vector<std::string> args) {
+    configmap map = file_to_map(configDir + "/profiles.conf");
     for (const auto& pair : map) {
       std::cout << pair.first << " - " << pair.second << std::endl;
     }
