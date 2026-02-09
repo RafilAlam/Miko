@@ -15,6 +15,28 @@ const std::string configDir = std::getenv("HOME") + std::string("/.config/miko")
 const std::string modelDir = std::getenv("HOME") + std::string("/.local/share/miko/");
 
 void loadProfile(std::string& modelpath, std::string& systemprompt) {
+  configmap map = file_to_map(configDir + "/models.conf");
+  modelpath = map[map["model_choice"]];
+  std::cout << map["model_choice"] << std::endl;
+  if (modelpath.empty()) {
+    std::cerr << "Invalid model choice!\n";
+    std::exit(1);
+  }
+  modelpath = modelDir + modelpath;
+
+  map = file_to_map(configDir + "/profiles.conf");
+  std::string data;
+  std::ifstream file(configDir + "/profiles/" + map[map["profile_choice"]]);
+  while (std::getline(file, data)) {
+    systemprompt += data;
+  }
+
+  if (systemprompt.empty()) {
+    debugLog("WARNING: Running model without a system prompt!");
+  }
+}
+
+void init() {
   if (!std::filesystem::exists(configDir)) {
     std::filesystem::create_directory(configDir);
     std::filesystem::create_directory(configDir + "/profiles");
@@ -35,28 +57,6 @@ void loadProfile(std::string& modelpath, std::string& systemprompt) {
     file.close();
   }
 
-  configmap map = file_to_map(configDir + "/models.conf");
-  modelpath = map[map["model_choice"]];
-  std::cout << map["model_choice"] << std::endl;
-  if (modelpath.empty()) {
-    std::cerr << "Invalid model choice!\n";
-    std::exit(1);
-  }
-  modelpath = modelDir + modelpath;
-
-  map = file_to_map(configDir + "/profiles.conf");
-  std::string data;
-  std::ifstream file(map[map["profile_choice"]]);
-  while (std::getline(file, data)) {
-    systemprompt += data;
-  }
-
-  if (systemprompt.empty()) {
-    debugLog("WARNING: Running model without a system prompt!");
-  }
-}
-
-void init() {
   functions["wake"] = [](std::vector<std::string> args) {
     std::string modelPath;
     std::string systemPrompt;
@@ -84,16 +84,6 @@ void init() {
     if (args.size()<=3) {
       functions["add"](args);
     }
-    else if (!std::filesystem::exists(modelDir)) {
-      std::filesystem::create_directory(modelDir);
-      std::cerr << "Model folder is empty! Please download a gguf and place it in '" << modelDir << "'\n";
-      std::exit(1);
-    }
-    else if (!std::filesystem::exists(configDir + "/models.conf")) {
-      std::ofstream file(configDir + "/models.conf");
-      file << "model_choice=\n";
-      file.close();
-    }
     configmap map = file_to_map(configDir + "/models.conf");
     map[args[3]] = args[4];
     map_to_file(map, configDir + "/models.conf");
@@ -103,7 +93,12 @@ void init() {
     std::cout << "Invalid usage of ls.\n ls -m - Shows list of models\n ls -p - Shows list of profiles\n";
   };
 
-  
+  functions["ls-m"] = [](std::vector<std::string> args) {
+    configmap map = file_to_map(configDir + "/models.conf");
+    for (const auto& pair : map) {
+      std::cout << pair.first << " - " << pair.second << std::endl;
+    }
+  };
 }
 
 int main(int argc, const char* argv[]) {
