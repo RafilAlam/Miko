@@ -57,6 +57,18 @@ void init() {
     file.close();
   }
 
+  functions[""] = [](std::vector<std::string> args) {
+    debugLog("Your personal desktop AI Assistant.");
+    std::cout << R"(
+    miko add -m model_name my_model.gguf    - register a local model file\n
+    miko add -p profile_name my_profile.txt - register a profile card file\n
+    miko cd -m model_name                   - swap to a registered model\n
+    miko cd -p profile_name                 - swap to a registered profile\n
+    miko ls -m                              - list registered models\n
+    miko ls -p                              - list registered profiles\n
+    miko wake                               - wake up & chat\n)";
+  };
+
   functions["cd-m"] = [](std::vector<std::string> args) {
     configmap map = file_to_map(configDir + "/models.conf");
     map["model_choice"] = args[3];
@@ -137,9 +149,14 @@ void init() {
 int main(int argc, const char* argv[]) {
   init();
   std::vector<std::string> args(argv, argv+argc);
-  std::string function = args[1];
-  if (argc>2) {
-    function += args[2];
+  if (argc==1) {
+    functions[""](args);
+    return 0;
   }
-  functions[function](args);
+  else {
+    std::string function = args[1];
+    if (argc>2) function += args[2];
+    functions[function](args);
+    return 0;
+  }
 }
