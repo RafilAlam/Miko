@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.2.3)
 
-project(Miko)
+project(miko)
 
 include(FetchContent)
 FetchContent_Declare(

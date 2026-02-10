@@ -59,14 +59,14 @@ void init() {
 
   functions[""] = [](std::vector<std::string> args) {
     debugLog("Your personal desktop AI Assistant.");
-    std::cout << R"(
-    miko add -m model_name my_model.gguf    - register a local model file\n
-    miko add -p profile_name my_profile.txt - register a profile card file\n
-    miko cd -m model_name                   - swap to a registered model\n
-    miko cd -p profile_name                 - swap to a registered profile\n
-    miko ls -m                              - list registered models\n
-    miko ls -p                              - list registered profiles\n
-    miko wake                               - wake up & chat\n)";
+    std::cout
+    << "\nmiko add -m model_name my_model.gguf    - register a local model file\n"
+    << "miko add -p profile_name my_profile.txt - register a profile card file\n"
+    << "miko cd -m model_name                   - swap to a registered model\n"
+    << "miko cd -p profile_name                 - swap to a registered profile\n"
+    << "miko ls -m                              - list registered models\n"
+    << "miko ls -p                              - list registered profiles\n"
+    << "miko wake                               - wake up & chat\n";
   };
 
   functions["cd-m"] = [](std::vector<std::string> args) {
